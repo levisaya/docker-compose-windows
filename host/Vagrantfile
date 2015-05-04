@@ -1,0 +1,38 @@
+# -*- mode: ruby -*-
+# vi: set ft=ruby :
+
+# All Vagrant configuration is done below. The "2" in Vagrant.configure
+# configures the configuration version (we support older styles for
+# backwards compatibility). Please don't change it unless you know what
+# you're doing.
+Vagrant.configure(2) do |config|
+  # The most common configuration options are documented and commented below.
+  # For a complete reference, please see the online documentation at
+  # https://docs.vagrantup.com.
+
+  # Spin up a "host box" for use with the Docker provider
+  # and then provision it with Docker
+  config.vm.box = "chef/centos-6.6"
+  config.vm.provision "docker"
+
+  # The following line terminates all ssh connections. Therefore
+  # Vagrant will be forced to reconnect.
+  # That's a workaround to have the docker command in the PATH
+  config.vm.provision "shell", inline:
+     "ps aux | grep 'sshd:' | awk '{print $2}' | xargs kill"
+
+  # Share an additional folder to the guest VM. The first argument is
+  # the path on the host to the actual folder. The second argument is
+  # the path on the guest to mount the folder. And the optional third
+  # argument is a set of non-required options.
+  config.vm.synced_folder "..", "/app"
+
+  # Create a forwarded port mapping which allows access to a specific port
+  # within the machine from a port on the host machine. In the example below,
+  # accessing "localhost:8080" will access port 80 on the guest machine.
+  config.vm.network "forwarded_port", guest: 80, host: 80
+
+  # Always use Vagrant's default insecure key
+  config.ssh.insert_key = false
+
+end

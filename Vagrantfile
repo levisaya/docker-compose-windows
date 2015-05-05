@@ -20,10 +20,6 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
     # Specify the Docker image to use
     docker.image = "dduportal/docker-compose:latest"
 
-    # Specify port mappings
-    # If omitted, no ports are mapped!
-    docker.ports = ["80:80"]
-
     # Specify a friendly name for the Docker container
     docker.name = "docker-compose-container"
 

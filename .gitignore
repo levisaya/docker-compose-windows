@@ -99,3 +99,12 @@ $RECYCLE.BIN/
 
 # Windows shortcuts
 *.lnk
+.vagrant/machines/default/docker/host_machine_sfid
+.vagrant/machines/default/docker/id
+.vagrant/machines/default/docker/index_uuid
+.vagrant/machines/default/docker/synced_folders
+host/.vagrant/machines/default/virtualbox/action_provision
+host/.vagrant/machines/default/virtualbox/action_set_name
+host/.vagrant/machines/default/virtualbox/id
+host/.vagrant/machines/default/virtualbox/synced_folders
+host/.vagrant/machines/default/virtualbox/index_uuid

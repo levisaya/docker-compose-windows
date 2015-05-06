@@ -1,45 +1,40 @@
 # -*- mode: ruby -*-
 # vi: set ft=ruby :
 
-# All Vagrant configuration is done below. The "2" in Vagrant.configure
-# configures the configuration version (we support older styles for
-# backwards compatibility). Please don't change it unless you know what
-# you're doing.
 Vagrant.configure(2) do |config|
-  # The most common configuration options are documented and commented below.
-  # For a complete reference, please see the online documentation at
-  # https://docs.vagrantup.com.
-	
+  # Spin up the virtual machine with 4 cores and 2GB RAM.
+  # This is optional, but speeds things up greatly if you do any compiling.
 	config.vm.provider "virtualbox" do |v|
       v.memory = 2048
       v.cpus = 4
   end
 	
-  # Spin up a "host box" for use with the Docker provider
-  # and then provision it with Docker
+  # Specify the Vagrant image we want to use for our host.
   config.vm.box = "chef/centos-6.6"
+
+  # Provision with Docker. This will automatically install Docker on the host VM.
   config.vm.provision "docker"
 
-  # The following line terminates all ssh connections. Therefore
-  # Vagrant will be forced to reconnect.
-  # That's a workaround to have the docker command in the PATH
+  # During Docker provisioning, the vagrant user is added to the docker group, but this doesn't take effect until login.
+  # This is a workaround I found here: https://github.com/mitchellh/vagrant/issues/3998
+  # Kills off the SSH sessions so Vagrant is forced to re-establish the SSH connection.
   config.vm.provision "shell", inline:
      "ps aux | grep 'sshd:' | awk '{print $2}' | xargs kill"
 
-  # Share an additional folder to the guest VM. The first argument is
-  # the path on the host to the actual folder. The second argument is
-  # the path on the guest to mount the folder. And the optional third
-  # argument is a set of non-required options.
+  # Add any folders you want to use in your host or containers.
+  # I mount the entire root of the project, so /app will contain my docker-compose.yml.
   config.vm.synced_folder "..", "/app"
 
-  # Create a forwarded port mapping which allows access to a specific port
-  # within the machine from a port on the host machine. In the example below,
-  # accessing "localhost:8080" will access port 80 on the guest machine.
+  # Any ports that you want to access from the machine running the VM need to be forwarded out.
+  # This should correspond to ports that are opened externally on your containers.
   config.vm.network "forwarded_port", guest: 80, host: 80
 
   # Always use Vagrant's default insecure key
   config.ssh.insert_key = false
 	
+  # These last steps are optional, but when working though issues with my docker-compose.yml and Dockerfiles, I found
+  # it to be pretty handy to be able to SSH to the VM and run docker-compose directly. Eventually, I just added it to
+  # be installed here.
 	config.vm.provision "shell", inline:
       "curl -L https://github.com/docker/compose/releases/download/1.2.0/docker-compose-`uname -s`-`uname -m` > ~/docker-compose"
 
